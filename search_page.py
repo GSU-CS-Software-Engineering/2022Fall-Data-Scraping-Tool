@@ -26,25 +26,11 @@ class HomePage:
         self.search_bar = tk.Text(self.root, height=2, width=15)
         self.label_search = tk.Label(self.root, text="Search For 10-K Results")
         self.label_cik = tk.Label(self.root, text='CIK List (Comma Delimited)')
-        self.label_date_start = tk.Label(self.root, text='Start Date')
-        self.label_date_end = tk.Label(self.root, text='End Date')
-
-        self.date_start_variable = tk.StringVar(self.root)
-        self.date_end_variable = tk.StringVar(self.root)
-        self.date_start_variable.set(years[0])
-        self.date_end_variable.set(years[-1])
-
-        self.date_start_menu = tk.OptionMenu(self.root, self.date_start_variable, *years)
-        self.date_end_menu = tk.OptionMenu(self.root, self.date_end_variable, *years)
 
         self.hours_worked_text = tk.Text(self.root, height=1, width=5)
 
         self.label_search.place(x=(500/2)-60, y=10)
         self.label_cik.place(x=(500/2)-70, y=60)
-        self.label_date_start.place(x=(500/2)-30, y=150)
-        self.label_date_end.place(x=(500/2)-30, y=210)
-        self.date_start_menu.place(x=(500/2)-30, y=170)
-        self.date_end_menu.place(x=(500/2)-30, y=230)
         self.analyze_button.place(x=(500/2)-90, y=310, width=200)
         self.search_bar.place(x=(500/2)-150, y=90, width=300, height=50)
         self.word_list_button.place(x=(500/2)-90, y=280, width=200)
