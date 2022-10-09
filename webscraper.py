@@ -3,7 +3,7 @@ import pandas as pd
 from bs4 import BeautifulSoup
 
 class WebScraper:
-    def make_URL(ciks):
+    def make_URL(self, ciks):
         # base URL for the SEC EDGAR browser
         endpoint = r"https://www.sec.gov/cgi-bin/browse-edgar"
 
