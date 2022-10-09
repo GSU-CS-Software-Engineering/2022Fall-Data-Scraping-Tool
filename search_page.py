@@ -1,7 +1,8 @@
 import tkinter as tk
 import datetime
+from webscraper import WebScraper
 
-class HomePage:
+class SearchPage:
 
     def __init__(self):
         """
@@ -9,13 +10,11 @@ class HomePage:
         """
 
         self.root = tk.Tk()
-        self.root.grid()
         self.padding = {'padx': 7, 'pady': 7}
-
         self.root.title("Data Scraping Tool")
-
         self.root.geometry("500x350")
 
+        self.webscraper = WebScraper()
         current_time = datetime.datetime.now()
         years = []
         for year in range(2001, current_time.year+1):
@@ -50,11 +49,27 @@ class HomePage:
         self.word_list_button.place(x=(500/2)-90, y=280, width=200)
 
 
-
-        print(years)
-
     def analyze(self):
-        pass
+        valid = True
+        cik_numbers = self.search_bar.get('1.0', 'end').split(',')
+        cik_numbers = [cik.strip() for cik in cik_numbers]
+        for ciks in cik_numbers:
+            try:
+                int(ciks)
+            except:
+                print(ciks + " is not a valid integer value")
+                valid = False
+            finally:
+                if len(ciks) != 10:
+                    valid = False
+                    print (ciks + " is not length 10")
+
+        if valid:
+            self.root.destroy()
+            self.webscraper.make_URL(cik_numbers)
+
+
+        print(cik_numbers)
 
     def configure(self):
         pass
@@ -63,6 +78,4 @@ class HomePage:
         self.root.mainloop()
 
 
-if __name__ == '__main__':
-    application = HomePage()
-    application.make_window()
+
