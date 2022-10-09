@@ -44,3 +44,20 @@ class Parser():
 
             # split into sentences for troubleshooting
             sentences = sent_tokenize(demo_string)
+
+        def getcount(self, regex_list, sentences):
+            count = 0
+            for regex in regex_list:
+                for sentence in sentences:
+                    if len(re.findall(regex, sentence)) != 0:
+                        print(re.findall(regex, sentence))
+                        count = count + len(re.findall(regex, sentence))
+            return count
+
+        term_count_dict = {
+            "infrastructure": self.getcount(infrastructure, sentences),
+            "strategic_positioning": self.getcount(strategic_positioning, sentences),
+            "operations": self.getcount(operations, sentences)
+        }
+        for key, value in term_count_dict.items():
+            print(f"{key}: {value}")
