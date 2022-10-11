@@ -16,7 +16,7 @@ class Parser():
 
 
     def demo_parser(self):
-        with open('demo_amazon.txt', 'r') as file:
+        with open('demo_amazon.txt', 'r', encoding='utf8') as file:
             demo_string = file.read().lower()
 
             # locates the start and finish of item_1
