@@ -20,7 +20,7 @@ class Parser():
             demo_string = file.read().lower()
 
             # locates the start and finish of item_1
-            item_1 = re.search(r'(item 1[:.][ \t\s]*business\s{1,2})(?=\D+)\b(?!\bitem\b)', demo_string)
+            item_1 = re.search(r'item 1[:.][ \t\s]*business\s{1,2}(?=\D+)(?!\bitem\b)', demo_string)
             demo_string = demo_string[item_1.end():]
             item_2 = re.search(r'item 2[:.][ \t\s]*properties[\t\s]+(?=\D+)\b(?!\bitem\b)', demo_string)
             demo_string = demo_string[:item_2.start()]
@@ -61,3 +61,6 @@ class Parser():
                     count = count + len(re.findall(regex, sentence))
         return count
 
+if __name__ == "__main__":
+    parser = Parser()
+    parser.demo_parser()
