@@ -1,5 +1,7 @@
+from os import remove
 import tkinter as tk
 import tkinter.filedialog
+import os.path
 
 
 class ConfigurePage:
@@ -11,14 +13,18 @@ class ConfigurePage:
         self.root.title("Data Scraping Tool")
         self.root.geometry("500x350")
 
+        self.hint = tk.Label(self.root, text= "Please note that asterisks are wildcard characters")
+
         self.title_text = tk.Label(self.root, text=" Word List Title")
-        self.wordlist_text = tk.Label(self.root, text="Word List (Space Delimited)")
+        self.wordlist_text = tk.Label(self.root, text="Word List (Comma Delimited)")
 
         self.title_bar = tk.Text(self.root, height=2, width=15)
         self.wordlist_bar = tk.Text(self.root, height=2, width=15)
 
         self.export_text_button = tk.Button(self.root, text="Export to New Text File", command=self.export_text)
         self.return_searchpage_button = tk.Button(self.root, text="Return to Search Page", command=self.root.destroy)
+
+        self.hint.place(x=(500/2)-150, y=10, width=300, height=10)
 
         self.title_text.place(x=(500/2)-150, y=40, width=300, height=30)
         self.wordlist_text.place(x=(500/2)-150, y=105, width=300, height=30)
@@ -30,16 +36,26 @@ class ConfigurePage:
         self.return_searchpage_button.place(x=(500/2)-100, y=300, width=200, height=25)
 
     def export_text(self):
-        path = tk.filedialog.askdirectory()
-        self.outputDir = path
 
         self.word_title = self.title_bar.get("1.0","end")
         self.title = str(self.word_title).replace("\n","")
 
-        self.word_list = self.wordlist_bar.get("1.0","end")
+        self.word_list = self.wordlist_bar.get("1.0","end").split(',')
 
-        with open(f"{self.title}.txt", "w") as f:
-            f.write(str(self.word_list))
+        self.remove_space = [self.word_list.strip() for self.word_list in self.word_list]
+
+
+        file_exists = os.path.exists(f"{self.title}.txt")
+
+        if file_exists:
+            with open(f"{self.title}.txt", "a") as f:
+                f.write("\n")
+                f.write(str( self.remove_space))
+
+        else:
+            with open(f"{self.title}.txt", "w") as f:
+                f.write(str(self.title))
+                f.write(str( self.remove_space))
 
     def make_window(self):
         self.root.mainloop()
