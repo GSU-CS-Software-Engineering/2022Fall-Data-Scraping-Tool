@@ -21,7 +21,7 @@ class ConfigurePage:
         self.title_bar = tk.Text(self.root, height=2, width=15)
         self.wordlist_bar = tk.Text(self.root, height=2, width=15)
 
-        self.export_text_button = tk.Button(self.root, text="Export to New Text File", command=self.export_text)
+        self.export_text_button = tk.Button(self.root, text="Save", command=self.export_text)
         self.return_searchpage_button = tk.Button(self.root, text="Return to Search Page", command=self.root.destroy)
 
         self.hint.place(x=(500/2)-150, y=10, width=300, height=10)
@@ -45,17 +45,21 @@ class ConfigurePage:
         self.remove_space = [self.word_list.strip() for self.word_list in self.word_list]
 
 
-        file_exists = os.path.exists(f"{self.title}.txt")
+        file_exists = os.path.exists(f"wordlist.txt")
 
         if file_exists:
-            with open(f"{self.title}.txt", "a") as f:
+            with open(f"wordlist.txt", "a") as f:
                 f.write("\n")
-                f.write(str( self.remove_space))
+                f.write(str(self.title))
+                f.write(str(self.remove_space))
 
         else:
-            with open(f"{self.title}.txt", "w") as f:
+            with open(f"wordlist.txt", "w") as f:
                 f.write(str(self.title))
-                f.write(str( self.remove_space))
+                f.write(str(self.remove_space))
+
+        self.title_bar.delete("1.0", "end")
+        self.wordlist_bar.delete("1.0", "end")
 
     def make_window(self):
         self.root.mainloop()
