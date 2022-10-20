@@ -22,7 +22,7 @@ class ConfigurePage:
         self.wordlist_bar = tk.Text(self.root, height=2, width=15)
 
         self.export_text_button = tk.Button(self.root, text="Save", command=self.export_text)
-        self.return_searchpage_button = tk.Button(self.root, text="Return to Search Page", command=self.root.destroy)
+        self.return_searchpage_button = tk.Button(self.root, text="Return to Search Page", command=self.exit)
 
         self.hint.place(x=(500/2)-150, y=10, width=300, height=10)
 
@@ -34,6 +34,10 @@ class ConfigurePage:
 
         self.export_text_button.place(x=(500/2)-100, y=270, width=200, height=25)
         self.return_searchpage_button.place(x=(500/2)-100, y=300, width=200, height=25)
+
+    def exit(self):
+        self.root.quit()
+        self.root.destroy()
 
     def export_text(self):
 
