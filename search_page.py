@@ -2,6 +2,7 @@ import tkinter as tk
 import datetime
 import os
 from configure_page import ConfigurePage
+from threading import Thread
 
 class SearchPage:
 
@@ -84,7 +85,6 @@ class SearchPage:
 
         if valid:
             self.root.destroy()
-            #self.webscraper.make_URL(cik_numbers)
 
 
         print(cik_numbers)
