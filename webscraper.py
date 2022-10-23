@@ -3,22 +3,59 @@ import pandas as pd
 from bs4 import BeautifulSoup
 
 class WebScraper:
-    def make_URL(self, ciks):
-        # base URL for the SEC EDGAR browser
+    def company_URL(cik, head):
         endpoint = r"https://www.sec.gov/cgi-bin/browse-edgar"
+    
+        param_dict = {'action':'getcompany',
+                    'CIK':cik,
+                    'type':'10-k',
+                    'owner':'exclude',
+                    'output':''}
 
-        # define our parameters dictionary
-        for i in ciks:
-            param_dict = {'action':'getcompany',
-                        'CIK':i,
-                        'type':'10-k',
-                        'owner':'exclude',
-                        'output':''}
+        response = requests.get(url = endpoint, params = param_dict, headers = head)
+        soup = BeautifulSoup(response.content, 'html.parser')
+        return soup
+    
+    def yearly_filings(soup, head):
+        doc_table = soup.find_all('table', class_='tableFile2')
+        base_url_sec = r"https://www.sec.gov"
 
-        # request the url, and then parse the response
-            response = requests.get(url = endpoint, params = param_dict)
-            soup = BeautifulSoup(response.content, 'html.parser')
+        for row in doc_table[0].find_all('tr')[0:]:
+            cols = row.find_all('td')
+            
+            if len(cols) != 0:                  
+                filing_date = cols[3].text.strip()
+                filing_doc_href = cols[1].find('a', {'href':True, 'id':'documentsbutton'})       
 
-        # print urls containing all 10-K filings for each company
-            print(i,":")
-            print(response.url)
+                if filing_doc_href != None:
+                    filing_doc_link = base_url_sec + filing_doc_href['href'] 
+
+                    response = requests.get(filing_doc_link, headers = head)
+                    soup = BeautifulSoup(response.content, "html.parser")
+                    
+                    doc_table_two = soup.find('table', class_="tableFile")
+                    ten_k_row = doc_table_two.find_all('tr')[1]
+                    ten_k_cols = ten_k_row.find_all('td')
+                    ten_k_doc_href = ten_k_cols[2].find('a', {'href':True})
+                    
+                    if ten_k_doc_href != None:
+                        ten_k_doc_link = base_url_sec + ten_k_doc_href['href'] 
+                    
+                    else:
+                        ten_k_doc_link = 'no link'
+                
+                else:
+                    filing_doc_link = 'no link'
+                
+                print(filing_date)
+                print(ten_k_doc_link)
+
+    if __name__ == "__main__":
+        print("Enter cik:")
+        cik = input().split(",")
+        print("Enter you school email:")
+        email = input()
+        head = {'User-Agent': 'Georgia Southern University AdminContact@{email}'}
+        soup = company_URL(cik, head)
+        yearly_filings(soup, head)
+            
