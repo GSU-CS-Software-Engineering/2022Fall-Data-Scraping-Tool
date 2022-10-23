@@ -48,8 +48,12 @@ class ExportPage:
         if (self.path != ""):
             self.root.destroy()
 
+    def get_start_over(self):
+        return self.start_over
+
     def make_window(self):
         self.root.mainloop()
+
 
 
 if __name__ == '__main__':
