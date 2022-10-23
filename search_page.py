@@ -72,6 +72,9 @@ class SearchPage:
         valid = True
         cik_numbers = self.search_bar.get('1.0', 'end').split(',')
         cik_numbers = [cik.strip() for cik in cik_numbers]
+
+        self.set_wordlist()
+        print(self.word_list)
         for ciks in cik_numbers:
             try:
                 int(ciks)
@@ -88,6 +91,22 @@ class SearchPage:
 
 
         print(cik_numbers)
+
+    def set_wordlist(self):
+        try:
+            word_list_title = self.word_list_start_variable.get()
+            file_exists = os.path.exists(f"wordlist.txt")
+
+            if file_exists:
+                with open(f"wordlist.txt", "r") as f:
+                    list = f.readline().split("[")
+                    if word_list_title == list[0]:
+                        self.word_list = list[1].replace(']', '').replace("'", "").split(',')
+                        self.word_list = [x.strip() for x in self.word_list]
+
+        except:
+            print("You Must have a Word List Selected")
+
 
     def configure(self):
         configure_page = ConfigurePage()
