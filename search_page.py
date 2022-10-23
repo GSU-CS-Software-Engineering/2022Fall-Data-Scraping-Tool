@@ -1,6 +1,8 @@
 import tkinter as tk
 import datetime
-from webscraper import WebScraper
+import os
+from configure_page import ConfigurePage
+from threading import Thread
 
 class SearchPage:
 
@@ -14,9 +16,11 @@ class SearchPage:
         self.root.title("Data Scraping Tool")
         self.root.geometry("500x350")
 
-        self.webscraper = WebScraper()
+        #self.webscraper = WebScraper()
         current_time = datetime.datetime.now()
         years = []
+        self.word_list = []
+        self.word_list.append("Select a Word List")
         for year in range(2001, current_time.year+1):
             years.append(year)
 
@@ -32,27 +36,45 @@ class SearchPage:
         self.date_end_variable = tk.StringVar(self.root)
         self.date_start_variable.set(years[0])
         self.date_end_variable.set(years[-1])
-
+        self.word_list_start_variable = tk.StringVar(self.root)
+        self.word_list_start_variable.set(self.word_list[0])
         self.date_start_menu = tk.OptionMenu(self.root, self.date_start_variable, *years)
         self.date_end_menu = tk.OptionMenu(self.root, self.date_end_variable, *years)
-
+        self.word_list_menu = tk.OptionMenu(self.root, self.word_list_start_variable, *self.word_list)
+        self.update_word_list()
         self.hours_worked_text = tk.Text(self.root, height=1, width=5)
 
         self.label_search.place(x=(500/2)-60, y=10)
         self.label_cik.place(x=(500/2)-70, y=60)
-        self.label_date_start.place(x=(500/2)-30, y=150)
-        self.label_date_end.place(x=(500/2)-30, y=210)
-        self.date_start_menu.place(x=(500/2)-30, y=170)
-        self.date_end_menu.place(x=(500/2)-30, y=230)
+        self.label_date_start.place(x=(500/2)-30, y=140)
+        self.label_date_end.place(x=(500/2)-30, y=190)
+        self.date_start_menu.place(x=(500/2)-30, y=160)
+        self.date_end_menu.place(x=(500/2)-30, y=210)
         self.analyze_button.place(x=(500/2)-90, y=310, width=200)
         self.search_bar.place(x=(500/2)-150, y=90, width=300, height=50)
         self.word_list_button.place(x=(500/2)-90, y=280, width=200)
+        self.word_list_menu.place(x=(500/2)-30, y=245)
 
+    def update_word_list(self):
+        print("updating word list")
+        file_exists = os.path.exists(f"wordlist.txt")
+
+        if file_exists:
+            with open(f"wordlist.txt", "r") as f:
+                list_title = f.readline().split("[")[0]
+                if list_title not in self.word_list:
+                    self.word_list.append(list_title)
+                    self.word_list_menu['menu'].add_command(label=list_title, command=tk._setit(self.word_list_start_variable, list_title))
+
+            self.word_list_start_variable.set(self.word_list[0])
 
     def analyze(self):
         valid = True
         cik_numbers = self.search_bar.get('1.0', 'end').split(',')
         cik_numbers = [cik.strip() for cik in cik_numbers]
+
+        self.set_wordlist()
+        print(self.word_list)
         for ciks in cik_numbers:
             try:
                 int(ciks)
@@ -62,20 +84,40 @@ class SearchPage:
             finally:
                 if len(ciks) != 10:
                     valid = False
-                    print (ciks + " is not length 10")
+                    print(ciks + " is not length 10")
 
         if valid:
             self.root.destroy()
-            self.webscraper.make_URL(cik_numbers)
 
 
         print(cik_numbers)
 
+    def set_wordlist(self):
+        try:
+            word_list_title = self.word_list_start_variable.get()
+            file_exists = os.path.exists(f"wordlist.txt")
+
+            if file_exists:
+                with open(f"wordlist.txt", "r") as f:
+                    list = f.readline().split("[")
+                    if word_list_title == list[0]:
+                        self.word_list = list[1].replace(']', '').replace("'", "").split(',')
+                        self.word_list = [x.strip() for x in self.word_list]
+
+        except:
+            print("You Must have a Word List Selected")
+
+
     def configure(self):
-        pass
+        configure_page = ConfigurePage()
+        configure_page.make_window()
+        self.update_word_list()
+
 
     def make_window(self):
         self.root.mainloop()
 
-
+if __name__ == '__main__':
+    application = SearchPage()
+    application.make_window()
 
