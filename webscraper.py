@@ -19,7 +19,7 @@ class WebScraper:
     def yearly_filings(soup, head):
         doc_table = soup.find_all('table', class_='tableFile2')
         base_url_sec = r"https://www.sec.gov"
-
+        ten_k_soup = []
         for row in doc_table[0].find_all('tr')[0:]:
             cols = row.find_all('td')
             
@@ -40,22 +40,26 @@ class WebScraper:
                     
                     if ten_k_doc_href != None:
                         ten_k_doc_link = base_url_sec + ten_k_doc_href['href'] 
-                    
+                        response = requests.get(ten_k_doc_link, headers=head)
+                        ten_k_soup.append(BeautifulSoup(response.content, 'html.parser'))
+
                     else:
                         ten_k_doc_link = 'no link'
                 
                 else:
-                    filing_doc_link = 'no link'
-                
+                    ten_k_doc_link = 'no link'
+
                 print(filing_date)
                 print(ten_k_doc_link)
+        return ten_k_soup
 
     if __name__ == "__main__":
         print("Enter cik:")
         cik = input().split(",")
-        print("Enter you school email:")
+        print("Enter your school email:")
         email = input()
         head = {'User-Agent': 'Georgia Southern University AdminContact@{email}'}
         soup = company_URL(cik, head)
-        yearly_filings(soup, head)
+        for x in yearly_filings(soup, head):
+            print(x.text)
             
