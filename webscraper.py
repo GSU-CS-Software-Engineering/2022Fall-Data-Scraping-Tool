@@ -3,7 +3,7 @@ import pandas as pd
 from bs4 import BeautifulSoup
 
 class WebScraper:
-    def company_URL(cik, head):
+    def company_URL(self, cik, head):
         endpoint = r"https://www.sec.gov/cgi-bin/browse-edgar"
     
         param_dict = {'action':'getcompany',
@@ -16,7 +16,7 @@ class WebScraper:
         soup = BeautifulSoup(response.content, 'html.parser')
         return soup
     
-    def yearly_filings(soup, head):
+    def yearly_filings(self, soup, head):
         doc_table = soup.find_all('table', class_='tableFile2')
         base_url_sec = r"https://www.sec.gov"
         ten_k_soup = []

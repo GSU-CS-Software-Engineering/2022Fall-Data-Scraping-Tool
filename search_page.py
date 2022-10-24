@@ -2,11 +2,11 @@ import tkinter as tk
 import datetime
 import os
 from configure_page import ConfigurePage
-from threading import Thread
+from webscraper import WebScraper
 
 class SearchPage:
 
-    def __init__(self):
+    def __init__(self, email):
         """
         This method sets up the GUI with the labels and buttons that make up the visual parts of the application.
         """
@@ -16,7 +16,8 @@ class SearchPage:
         self.root.title("Data Scraping Tool")
         self.root.geometry("500x350")
 
-        #self.webscraper = WebScraper()
+        self.email = email
+        self.webscraper = WebScraper()
         current_time = datetime.datetime.now()
         years = []
         self.word_list = []
@@ -72,13 +73,18 @@ class SearchPage:
         valid = True
         cik_numbers = self.search_bar.get('1.0', 'end').split(',')
         cik_numbers = [cik.strip() for cik in cik_numbers]
-
+        head = {'User-Agent': 'Georgia Southern University AdminContact@{self.email}'}
         self.set_wordlist()
         print(self.word_list)
         for ciks in cik_numbers:
             try:
                 int(ciks)
-            except:
+                soup = self.webscraper.company_URL(ciks, head)
+                print("got here")
+                for x in self.webscraper.yearly_filings(soup, head):
+                    print(x.text)
+            except Exception as ex:
+                print(ex.with_traceback())
                 print(ciks + " is not a valid integer value")
                 valid = False
             finally:

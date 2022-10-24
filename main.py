@@ -26,7 +26,7 @@ while continue_check:
 
     parser = Parser()
 
-    home_page = sp.SearchPage()
+    home_page = sp.SearchPage(user_email)
     home_page.make_window()
 
 
