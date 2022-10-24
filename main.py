@@ -33,7 +33,6 @@ while continue_check:
     end_page = ep.ExportPage()
     end_page.make_window()
     print(end_page.get_start_over())
-    parser.demo_parser()
     if (not end_page.get_start_over()):
         continue_check = False
 
