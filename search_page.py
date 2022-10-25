@@ -3,6 +3,7 @@ import datetime
 import os
 from configure_page import ConfigurePage
 from webscraper import WebScraper
+from text_parser import Parser
 
 class SearchPage:
 
@@ -18,6 +19,7 @@ class SearchPage:
 
         self.email = email
         self.webscraper = WebScraper()
+        self.parser = Parser()
         current_time = datetime.datetime.now()
         years = []
         self.word_list = []
@@ -80,9 +82,9 @@ class SearchPage:
             try:
                 int(ciks)
                 soup = self.webscraper.company_URL(ciks, head)
-                print("got here")
                 for x in self.webscraper.yearly_filings(soup, head):
-                    print(x.text)
+                    if 'Directory List of /Archives/edgar/data/' not in x.text:
+                        print(x.text.strip()[:3000])
             except Exception as ex:
                 print(ex.with_traceback())
                 print(ciks + " is not a valid integer value")
@@ -95,8 +97,6 @@ class SearchPage:
         if valid:
             self.root.destroy()
 
-
-        print(cik_numbers)
 
     def set_wordlist(self):
         try:
