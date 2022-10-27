@@ -39,7 +39,8 @@ class WebScraper:
                     ten_k_doc_href = ten_k_cols[2].find('a', {'href':True})
                     
                     if ten_k_doc_href != None:
-                        ten_k_doc_link = base_url_sec + ten_k_doc_href['href'] 
+                        ten_k_doc_link = base_url_sec + ten_k_doc_href['href']
+                        ten_k_doc_link = ten_k_doc_link.replace('/ix?doc=', '')
                         response = requests.get(ten_k_doc_link, headers=head)
                         ten_k_soup.append(BeautifulSoup(response.content, 'html.parser'))
 
