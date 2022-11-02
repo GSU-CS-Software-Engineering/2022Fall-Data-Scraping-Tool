@@ -3,6 +3,7 @@ import datetime
 import os
 from configure_page import ConfigurePage
 from threading import Thread
+from submit_page import SubmitPage
 
 class SearchPage:
 
@@ -91,6 +92,9 @@ class SearchPage:
 
 
         print(cik_numbers)
+        x = SubmitPage()
+        x.display_query(cik_numbers)
+        x.make_window()
 
     def set_wordlist(self):
         try:
