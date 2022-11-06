@@ -25,7 +25,7 @@ class Parser():
         term_list = self.makelist([term.lstrip() for term in term_list.split(',')])
         word_counts = self.getcount(regex_list=term_list, sentences=sentences)
         frequency = word_counts/total_word_count
-        return total_word_count, frequency
+        print(f'{frequency*100}%')
 
 
     def getcount(self, regex_list, sentences):
