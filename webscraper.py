@@ -20,18 +20,21 @@ class WebScraper:
         doc_table = soup.find_all('table', class_='tableFile2')
         base_url_sec = r"https://www.sec.gov"
         ten_k_soup = []
+        valid_dates = []
         for row in doc_table[0].find_all('tr')[0:]:
             cols = row.find_all('td')
             
-            if len(cols) != 0:                  
+            if len(cols) != 0:
+
+
                 filing_date = int(cols[3].text.strip()[0:4])
                 filing_type = cols[0].text.strip()
                 
                 if filing_date > end:
                     continue
                 elif filing_date < start:
-                    break 
-
+                    break
+                valid_dates.append(cols[3].text.strip())
                 if filing_type == "10-K/A":
                     continue
 
@@ -63,7 +66,7 @@ class WebScraper:
                 print(filing_date)
                 print(ten_k_doc_link)
                 print(filing_type)
-        return ten_k_soup
+        return [ten_k_soup, valid_dates]
 
 if __name__ == "__main__":
     print("Enter cik:")
