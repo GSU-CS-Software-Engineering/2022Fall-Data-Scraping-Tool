@@ -25,11 +25,15 @@ class WebScraper:
             
             if len(cols) != 0:                  
                 filing_date = int(cols[3].text.strip()[0:4])
-
+                filing_type = cols[0].text.strip()
+                
                 if filing_date > end:
                     continue
                 elif filing_date < start:
                     break 
+
+                if filing_type == "10-K/A":
+                    continue
 
                 filing_doc_href = cols[1].find('a', {'href':True, 'id':'documentsbutton'})       
 
@@ -58,6 +62,7 @@ class WebScraper:
 
                 print(filing_date)
                 print(ten_k_doc_link)
+                print(filing_type)
         return ten_k_soup
 
 if __name__ == "__main__":
@@ -68,6 +73,6 @@ if __name__ == "__main__":
     email = input()
     head = {'User-Agent': 'Georgia Southern University AdminContact@{email}'}
     soup = test.company_URL(cik, head)
-    for x in test.yearly_filings(soup, head, 2017, 2020):
+    for x in test.yearly_filings(soup, head, 2017, 2022):
         continue
             
