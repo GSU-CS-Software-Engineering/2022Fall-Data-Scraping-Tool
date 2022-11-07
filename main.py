@@ -29,10 +29,13 @@ while continue_check:
     home_page = sp.SearchPage(user_email)
     home_page.make_window()
 
+    export_data = home_page.get_output_data()
 
-    end_page = ep.ExportPage()
+    print(export_data)
+
+    end_page = ep.ExportPage(export_data)
     end_page.make_window()
-    print(end_page.get_start_over())
+
     if (not end_page.get_start_over()):
         continue_check = False
 

@@ -22,7 +22,7 @@ class Parser():
         # split into sentences for troubleshooting
         sentences = sent_tokenize(text)
         total_word_count = len(text.split())
-        term_list = self.makelist([term.lstrip() for term in term_list.split(',')])
+        term_list = self.makelist(term_list)
         word_counts = self.getcount(regex_list=term_list, sentences=sentences)
         return total_word_count, word_counts
 

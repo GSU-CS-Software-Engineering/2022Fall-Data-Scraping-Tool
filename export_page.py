@@ -38,12 +38,12 @@ class ExportPage:
 
     def export_new(self):
         current_time = datetime.datetime.now()
-        path = tkinter.filedialog.askdirectory()
-        self.outputDir = path + f"/{current_time.month}.{current_time.day}.{current_time.year}.WordFrequencyData"
+        self.path = tkinter.filedialog.askdirectory()
+        self.outputDir = self.path + f"/{current_time.month}-{current_time.day}-{current_time.year}-WordFrequencyData.csv"
         if self.path != "":
             f = open(self.outputDir, 'w')
-            writer = csv.writer(f)
-            headers = ["cik", "form filed", "reporting for",  "word count section 1",	"word count from list"]
+            writer = csv.writer(f, lineterminator='\n')
+            headers = ["cik", "form", "filed", "reporting for",  "word count section 1",	"word count from list"]
             writer.writerow(headers)
             for row in self.frequency_data:
                 writer.writerow(row)
@@ -52,8 +52,8 @@ class ExportPage:
     def export_existing(self):
         self.path = tkinter.filedialog.askopenfilenames(title="Open File")
         if self.path != "":
-            f = open(self.path, "a")
-            writer = csv.writer(f)
+            f = open(self.path[0], "a")
+            writer = csv.writer(f, lineterminator='\n')
             for row in self.frequency_data:
                 writer.writerow(row)
 

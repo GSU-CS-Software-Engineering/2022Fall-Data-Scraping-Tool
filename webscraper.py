@@ -30,9 +30,9 @@ class WebScraper:
                 filing_date = int(cols[3].text.strip()[0:4])
                 filing_type = cols[0].text.strip()
                 
-                if filing_date > end:
+                if filing_date > int(end):
                     continue
-                elif filing_date < start:
+                elif filing_date < int(start):
                     break
                 valid_dates.append(cols[3].text.strip())
                 if filing_type == "10-K/A":
@@ -66,7 +66,7 @@ class WebScraper:
                 print(filing_date)
                 print(ten_k_doc_link)
                 print(filing_type)
-        return [ten_k_soup, valid_dates]
+        return ten_k_soup, valid_dates
 
 if __name__ == "__main__":
     print("Enter cik:")
