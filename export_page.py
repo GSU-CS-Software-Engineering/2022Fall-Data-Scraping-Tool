@@ -1,12 +1,16 @@
+import datetime
 import tkinter as tk
 import tkinter.filedialog
+import csv
 
 class ExportPage:
 
-    def __init__(self):
+    def __init__(self, frequency_data):
         """
         This method sets up the GUI with the labels and buttons that make up the visual parts of the application.
         """
+        self.frequency_data = frequency_data
+        self.outputDir = ""
 
         self.root = tk.Tk()
         self.root.grid()
@@ -33,19 +37,26 @@ class ExportPage:
         self.root.destroy()
 
     def export_new(self):
+        current_time = datetime.datetime.now()
         path = tkinter.filedialog.askdirectory()
-        self.outputDir = path
-
-        if (self.path != ""):
+        self.outputDir = path + f"/{current_time.month}.{current_time.day}.{current_time.year}.WordFrequencyData"
+        if self.path != "":
+            f = open(self.outputDir, 'w')
+            writer = csv.writer(f)
+            headers = ["cik", "form filed", "reporting for",  "word count section 1",	"word count from list"]
+            writer.writerow(headers)
+            for row in self.frequency_data:
+                writer.writerow(row)
             self.root.destroy()
 
     def export_existing(self):
         self.path = tkinter.filedialog.askopenfilenames(title="Open File")
-        for i in self.path:
-            print(i)
-        self.all_files = self.path
+        if self.path != "":
+            f = open(self.path, "a")
+            writer = csv.writer(f)
+            for row in self.frequency_data:
+                writer.writerow(row)
 
-        if (self.path != ""):
             self.root.destroy()
 
     def get_start_over(self):

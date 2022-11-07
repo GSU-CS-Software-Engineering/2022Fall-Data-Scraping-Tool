@@ -4,6 +4,8 @@ import os
 from configure_page import ConfigurePage
 from webscraper import WebScraper
 from text_parser import Parser
+from threading import Thread
+from submit_page import SubmitPage
 
 class SearchPage:
 
@@ -97,6 +99,11 @@ class SearchPage:
         if valid:
             self.root.destroy()
 
+
+        print(cik_numbers)
+        x = SubmitPage()
+        x.display_query(cik_numbers)
+        x.make_window()
 
     def set_wordlist(self):
         try:
