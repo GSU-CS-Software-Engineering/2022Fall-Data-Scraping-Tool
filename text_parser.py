@@ -12,6 +12,7 @@ class Parser():
 
     def get_item(self, soup):
         demo_string = soup.get_text(separator=' ').lower().replace(' ', ' ')
+        print(f"demo_string:{demo_string}")
         item_1 = re.search(r'item 1[:.][\s]*business\s+(?=\D)\S', demo_string)
         demo_string = demo_string[item_1.end()-1:]
         item_2 = re.search(r'item 2[:.][\s]*properties\s+(?=\D)\S', demo_string)

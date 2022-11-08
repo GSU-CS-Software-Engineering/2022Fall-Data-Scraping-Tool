@@ -19,9 +19,8 @@ class SearchPage:
         self.root.title("Data Scraping Tool")
         self.root.geometry("500x350")
 
-        self.output_data = []
+
         self.email = email
-        self.webscraper = WebScraper()
         self.parser = Parser()
         current_time = datetime.datetime.now()
         years = []
@@ -75,44 +74,14 @@ class SearchPage:
             self.word_list_start_variable.set(self.word_list[0])
 
     def analyze(self):
-        self.output_data = []
-        parser = Parser()
-        valid = True
-        cik_numbers = self.search_bar.get('1.0', 'end').split(',')
-        cik_numbers = [cik.strip() for cik in cik_numbers]
-        head = {'User-Agent': 'Georgia Southern University AdminContact@{self.email}'}
         self.set_wordlist()
-        print(self.word_list)
-        for ciks in cik_numbers:
-            try:
-                int(ciks)
-                soup = self.webscraper.company_URL(ciks, head)
-                filings, dates = self.webscraper.yearly_filings(soup, head, self.date_start_variable.get(), self.date_end_variable.get())
-                for x, y in zip(filings, dates):
-                    item = parser.get_item(x)
-                    total_word_count, matches = parser.get_term_frequency(item, self.word_list)
-                    temp_date = y.split('-')
-                    reporting_date = f"12/31/{temp_date[0]}"
-                    y = f"{temp_date[1]}/{temp_date[2]}/{temp_date[0]}"
-                    self.output_data.append([ciks, "10-K (Annual report)", y, reporting_date, total_word_count, matches])
+        x = SubmitPage(self.search_bar.get('1.0', 'end').split(','), self.date_start_variable.get(), self.date_end_variable.get(), self.word_list, self.email)
+        self.output_data = x.get_output_data()
+        self.root.destroy()
+        self.root.quit()
 
-            except Exception as ex:
-                print(ex.with_traceback())
-                print(ciks + " is not a valid integer value")
-                valid = False
-            finally:
-                if len(ciks) != 10:
-                    valid = False
-                    print(ciks + " is not length 10")
-
-        if valid:
-            self.root.destroy()
-
-
-        print(cik_numbers)
-        x = SubmitPage()
-        x.display_query(cik_numbers)
-        x.make_window()
+    def get_output_data(self):
+        return self.output_data
 
     def set_wordlist(self):
         try:
@@ -135,8 +104,7 @@ class SearchPage:
         configure_page.make_window()
         self.update_word_list()
 
-    def get_output_data(self):
-        return self.output_data
+
 
     def make_window(self):
         self.root.mainloop()
