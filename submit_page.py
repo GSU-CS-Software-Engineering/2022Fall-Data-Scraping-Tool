@@ -7,6 +7,8 @@ from configure_page import ConfigurePage
 from threading import Thread
 from text_parser import Parser
 from webscraper import WebScraper
+import time
+import datetime as dt
 
 
 class SubmitPage:
@@ -25,17 +27,24 @@ class SubmitPage:
         self.email = email
 
         self.title_text = tk.Label(self.root, text="Querying EDGAR....")
+        self.progress = tk.Label(self.root, text="Estimated Finish Time: ")
         self.query_button = tk.Button(self.root, text="", command=self.query)
         # self.title_bar = tk.Text(self.root, height=2, width=15)
 
         self.title_text.place(x=(500/2)-150, y=40, width=300, height=30)
+        self.progress.place(x=(500/2)-160, y=150)
         # self.title_bar.place(x=(500/2)-120, y=90, width=250, height=150)
         self.p = Progressbar(self.root, orient="horizontal", length=250, mode="determinate")
         self.p.place(x=125, y=350-270)
         self.make_window()
 
 
-
+    def calcRemainingTime(self, start, current, max):
+        elapsed = time.time() - start
+        estimated = (elapsed/current) * max
+        finish = start + estimated
+        finish = dt.datetime.fromtimestamp(finish)
+        return finish
 
     def query(self):
         self.output_data = []
@@ -45,11 +54,11 @@ class SubmitPage:
         cik_numbers = self.cik_nums
         cik_numbers = [cik.strip() for cik in cik_numbers]
         head = {'User-Agent': 'Georgia Southern University AdminContact@{self.email}'}
-        increments = 0
         print(self.word_list)
         print(cik_numbers)
         for ciks in cik_numbers:
             try:
+                start = time.time()
                 self.title_text.config(text=f"Now querying CIK: {ciks}")
                 int(ciks)
                 soup = webscraper.company_URL(ciks, head)
@@ -59,10 +68,20 @@ class SubmitPage:
                 self.root.update()
                 list_filings = webscraper.yearly_filings(soup)
                 print(f"Length of list_filings: {len(list_filings)}")
+                increments = 0
                 for x in list_filings:
                     increments += 1
                     filings, dates = webscraper.scrape_filing(head, x, self.end_date, self.start_date)
+                    times = self.calcRemainingTime(start, increments, len(list_filings))
+                    now = dt.datetime.fromtimestamp(time.time())
+                    delta = str(times - now)
+                    hours, minutes, seconds = delta.split(":")
+                    remaining_time = f"{hours} hour(s), {minutes} minute(s), {seconds[:2]} second(s)"
+
+
+
                     if filings == 0:
+                        self.progress.config(text=f"Estimated Finish Time: {remaining_time}")
                         self.p['value'] += 100/len(list_filings)
                         self.root.update_idletasks()
                         self.p.update()
@@ -79,6 +98,7 @@ class SubmitPage:
                         self.p.update()
                         self.root.update()
 
+                    self.progress.config(text=f"Estimated Finish Time: {remaining_time}")
                     item = parser.get_item(filings)
                     total_word_count, matches = parser.get_term_frequency(item, self.word_list)
                     temp_date = dates.split('-')
