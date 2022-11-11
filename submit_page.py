@@ -24,7 +24,7 @@ class SubmitPage:
         self.word_list = word_list
         self.email = email
 
-        self.title_text = tk.Label(self.root, text="Query Submit Results")
+        self.title_text = tk.Label(self.root, text="Querying EDGAR....")
         self.query_button = tk.Button(self.root, text="", command=self.query)
         # self.title_bar = tk.Text(self.root, height=2, width=15)
 
@@ -50,7 +50,7 @@ class SubmitPage:
         print(cik_numbers)
         for ciks in cik_numbers:
             try:
-                print(f"beginning work on cik {ciks}")
+                self.title_text.config(text=f"Now querying CIK: {ciks}")
                 int(ciks)
                 soup = webscraper.company_URL(ciks, head)
                 self.p['value'] = 0
@@ -58,22 +58,23 @@ class SubmitPage:
                 self.p.update()
                 self.root.update()
                 list_filings = webscraper.yearly_filings(soup)
+                print(f"Length of list_filings: {len(list_filings)}")
                 for x in list_filings:
                     increments += 1
                     filings, dates = webscraper.scrape_filing(head, x, self.end_date, self.start_date)
                     if filings == 0:
-                        self.p['value'] += (250/len(list_filings))
+                        self.p['value'] += 100/len(list_filings)
                         self.root.update_idletasks()
                         self.p.update()
                         self.root.update()
                         continue
-                    elif increments == len(list_filings)-1:
-                        self.p['value'] = 250
+                    elif increments == len(list_filings):
+                        self.p['value'] = 100
                         self.root.update_idletasks()
                         self.p.update()
                         self.root.update()
                     else:
-                        self.p['value'] += (250/len(list_filings))
+                        self.p['value'] += 100/len(list_filings)
                         self.root.update_idletasks()
                         self.p.update()
                         self.root.update()
