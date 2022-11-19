@@ -11,10 +11,14 @@ class Parser():
 
 
     def get_item(self, soup):
-        demo_string = soup.get_text(separator=' ').lower().replace(' ', ' ')
-        item_1 = re.search(r'i\s*tem\s*1[:.][\s]*business\s+(?=\D)\S', demo_string)
+        demo_string = soup.get_text(separator=' ').lower().replace(' ', '')
+        item_1 = re.search(r'i\s*t\s*e\s*m\s*1[:.][\s]*b\s*u\s*s\s*i\s*n\s*e\s*s\s*s\S*\s+(?=\D)\S', demo_string)
+        if item_1 is None:
+            print(f"Item 1 not found, printing demo string: {demo_string}")
         demo_string = demo_string[item_1.end()-1:]
-        item_2 = re.search(r'i\s*tem\s*2[:.][\s]*properties\s+(?=\D)\S', demo_string)
+        item_2 = re.search(r'i\s*t\s*e\s*m\s*2[:.][\s]*p\s*r\s*o\s*p\s*e\s*r\s*t\s*i\s*e\s*s\S*\s+(?=\D)\S', demo_string)
+        if item_2 is None:
+            print(f"Item 2 not found, printing demo string: {demo_string}")
         demo_string = demo_string[:item_2.start()]
         return re.sub(r"\s+", ' ', demo_string)
 

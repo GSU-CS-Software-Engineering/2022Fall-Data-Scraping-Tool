@@ -34,7 +34,7 @@ class WebScraper:
                 print("date too small")
                 return 0,0
             valid_date = cols[3].text.strip()
-            if filing_type == "10-K/A":
+            if "a" in filing_type.lower():
                 print("is amended")
                 return 0,0
 
