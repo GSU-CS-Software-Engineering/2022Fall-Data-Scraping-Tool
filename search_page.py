@@ -89,7 +89,6 @@ class SearchPage:
         cik_page = requests.get(url='https://www.sec.gov/Archives/edgar/cik-lookup-data.txt', headers=head)
         all_ciks = cik_page.content
         invalid_ciks = ""
-        print(all_ciks)
 
         for cik in ciks:
             cik = cik.strip()
