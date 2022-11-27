@@ -67,13 +67,19 @@ class SearchPage:
     def update_word_list(self):
         print("updating word list")
         file_exists = os.path.exists(f"wordlist.txt")
+        self.word_list = []
+        self.word_list_start_variable.set('Select a word list')
+        self.word_list_menu['menu'].delete(0, 'end')
+        self.word_list_menu['menu'].add_command(label="Select a word list", command=tk._setit(self.word_list_start_variable, "Select a word list"))
+        self.word_list.append("Select a word list")
+
 
         if file_exists:
             with open(f"wordlist.txt", "r") as f:
                 for list_title in f.readlines():
-                    list_title = list_title.split("[")[0]
-                    print(list_title)
-                    if list_title not in self.word_list:
+                    if list_title.strip() != "":
+                        list_title = list_title.split("[")[0]
+                        print(list_title)
                         self.word_list.append(list_title)
                         self.word_list_menu['menu'].add_command(label=list_title, command=tk._setit(self.word_list_start_variable, list_title))
 
