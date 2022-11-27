@@ -26,6 +26,7 @@ class SubmitPage:
         self.word_list = word_list
         self.email = email
 
+
         self.title_text = tk.Label(self.root, text="Querying EDGAR....")
         self.progress = tk.Label(self.root, text="Estimated Finish Time: ")
         self.query_button = tk.Button(self.root, text="", command=self.query)
@@ -108,12 +109,8 @@ class SubmitPage:
 
             except Exception as ex:
                 print(ex.with_traceback())
-                print(ciks + " is not a valid integer value")
-                valid = False
+
             finally:
-                if len(ciks) != 10:
-                    valid = False
-                    print(ciks + " is not length 10")
                 print(f"cik:{ciks} finished processing")
 
 

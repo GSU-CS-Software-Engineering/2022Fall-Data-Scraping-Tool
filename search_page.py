@@ -6,7 +6,9 @@ from configure_page import ConfigurePage
 from webscraper import WebScraper
 from text_parser import Parser
 from threading import Thread
+from warning_page import WarningPage
 from submit_page import SubmitPage
+import traceback
 
 class SearchPage:
 
@@ -19,6 +21,7 @@ class SearchPage:
         self.padding = {'padx': 7, 'pady': 7}
         self.root.title("Data Scraping Tool")
         self.root.geometry("500x350")
+        self.word_list_selected = False
 
 
         self.email = email
@@ -67,10 +70,12 @@ class SearchPage:
 
         if file_exists:
             with open(f"wordlist.txt", "r") as f:
-                list_title = f.readline().split("[")[0]
-                if list_title not in self.word_list:
-                    self.word_list.append(list_title)
-                    self.word_list_menu['menu'].add_command(label=list_title, command=tk._setit(self.word_list_start_variable, list_title))
+                for list_title in f.readlines():
+                    list_title = list_title.split("[")[0]
+                    print(list_title)
+                    if list_title not in self.word_list:
+                        self.word_list.append(list_title)
+                        self.word_list_menu['menu'].add_command(label=list_title, command=tk._setit(self.word_list_start_variable, list_title))
 
             self.word_list_start_variable.set(self.word_list[0])
 
@@ -78,43 +83,76 @@ class SearchPage:
 
         head = {'User-Agent': self.email.strip()}
         analyze = True
+        error_given = False
         self.set_wordlist()
         ciks = self.search_bar.get('1.0', 'end').split(',')
         cik_page = requests.get(url='https://www.sec.gov/Archives/edgar/cik-lookup-data.txt', headers=head)
         all_ciks = cik_page.content
-
+        invalid_ciks = ""
         print(all_ciks)
 
         for cik in ciks:
             cik = cik.strip()
-            if cik not in str(all_ciks):
-                print("Not a real cik")
+            try:
+                int(cik)
+                if cik not in str(all_ciks):
+                    invalid_ciks = invalid_ciks + cik + " "
+                    analyze = False
+            except:
+                wp = WarningPage(cik + " is not a valid integer value. Try again.")
+                error_given = True
                 analyze = False
+            finally:
+                if len(cik) != 10:
+                    wp = WarningPage(cik + " is not a 10 digit CIK number. Try again.")
+                    error_given = True
+                    analyze = False
         if analyze:
-            x = SubmitPage(ciks, self.date_start_variable.get(), self.date_end_variable.get(), self.word_list, self.email)
-            self.output_data = x.get_output_data()
-            self.root.destroy()
-            self.root.quit()
+            print("Word list: ")
+            print(self.word_list)
+            if self.word_list_selected:
+                x = SubmitPage(ciks, self.date_start_variable.get(), self.date_end_variable.get(), self.word_list, self.email)
+                self.output_data = x.get_output_data()
+                self.root.destroy()
+                self.root.quit()
+
+        elif error_given:
+            pass
+
         else:
-            print("Not a valid CIK number")
+            wp = WarningPage("Invalid CIK(s): " + invalid_ciks + " Please try again.")
 
     def get_output_data(self):
         return self.output_data
 
     def set_wordlist(self):
+        word_list = False
         try:
             word_list_title = self.word_list_start_variable.get()
             file_exists = os.path.exists(f"wordlist.txt")
 
             if file_exists:
                 with open(f"wordlist.txt", "r") as f:
-                    list = f.readline().split("[")
-                    if word_list_title == list[0]:
-                        self.word_list = list[1].replace(']', '').replace("'", "").split(',')
-                        self.word_list = [x.strip() for x in self.word_list]
+                    for list in f.readlines():
+                        list = list.split("[")
+                        if word_list_title == list[0]:
+                            self.word_list = list[1].replace(']', '').replace("'", "").split(',')
+                            self.word_list = [x.strip() for x in self.word_list]
+                            print("setting wordlist")
+                            print(self.word_list)
+                            word_list = True
+                            self.word_list_selected = True
 
         except:
-            print("You Must have a Word List Selected")
+            traceback.print_exc()
+            wp = WarningPage("You must have a word list selected.")
+            word_list = True
+            self.word_list_selected = False
+
+        if not word_list:
+            wp = WarningPage("You must have a word list selected.")
+            self.word_list_selected = False
+
 
 
     def configure(self):
