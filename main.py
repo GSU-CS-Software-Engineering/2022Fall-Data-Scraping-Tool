@@ -8,9 +8,9 @@ These lines may need to be added the first time the program is ran on a new mach
 import nltk
 pltk.download('punkt')
 '''
-continue_check = True
+
 user_email = ""
-while continue_check:
+while True:
 
     file_exists = os.path.exists(f"useremail.txt")
     if file_exists:
@@ -35,7 +35,4 @@ while continue_check:
 
     end_page = ep.ExportPage(export_data)
     end_page.make_window()
-
-    if (not end_page.get_start_over()):
-        continue_check = False
 
