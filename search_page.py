@@ -1,6 +1,7 @@
 import tkinter as tk
 import datetime
 import os
+import requests
 from configure_page import ConfigurePage
 from webscraper import WebScraper
 from text_parser import Parser
@@ -74,11 +75,28 @@ class SearchPage:
             self.word_list_start_variable.set(self.word_list[0])
 
     def analyze(self):
+
+        head = {'User-Agent': self.email.strip()}
+        analyze = True
         self.set_wordlist()
-        x = SubmitPage(self.search_bar.get('1.0', 'end').split(','), self.date_start_variable.get(), self.date_end_variable.get(), self.word_list, self.email)
-        self.output_data = x.get_output_data()
-        self.root.destroy()
-        self.root.quit()
+        ciks = self.search_bar.get('1.0', 'end').split(',')
+        cik_page = requests.get(url='https://www.sec.gov/Archives/edgar/cik-lookup-data.txt', headers=head)
+        all_ciks = cik_page.content
+
+        print(all_ciks)
+
+        for cik in ciks:
+            cik = cik.strip()
+            if cik not in str(all_ciks):
+                print("Not a real cik")
+                analyze = False
+        if analyze:
+            x = SubmitPage(ciks, self.date_start_variable.get(), self.date_end_variable.get(), self.word_list, self.email)
+            self.output_data = x.get_output_data()
+            self.root.destroy()
+            self.root.quit()
+        else:
+            print("Not a valid CIK number")
 
     def get_output_data(self):
         return self.output_data
