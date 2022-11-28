@@ -92,8 +92,24 @@ class SearchPage:
         error_given = False
         self.set_wordlist()
         ciks = self.search_bar.get('1.0', 'end').split(',')
-        cik_page = requests.get(url='https://www.sec.gov/Archives/edgar/cik-lookup-data.txt', headers=head)
-        all_ciks = cik_page.content
+        try:
+            cik_page = requests.get(url='https://www.sec.gov/Archives/edgar/cik-lookup-data.txt', headers=head)
+            all_ciks = cik_page.content
+            cik_page.raise_for_status()
+            err_string = ""
+        except requests.exceptions.HTTPError as errh:
+            err_string = err_string + "HTTP Error: " + errh + "\n"
+        except requests.exceptions.ConnectionError as errc:
+            err_string = err_string + "Error Connecting: " + errc + "\n"
+        except requests.exceptions.Timeout as errt:
+            err_string = err_string + "Timeout Error: " + errt + "\n"
+        except requests.exceptions.RequestException as err:
+            err_string = err_string + "Error: " + err + "\n"
+        if err_string != "":
+            w = WarningPage(err_string)
+
+
+
         invalid_ciks = ""
 
         for cik in ciks:

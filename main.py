@@ -24,8 +24,6 @@ while True:
     if user_email == "":
         break
 
-    parser = Parser()
-
     home_page = sp.SearchPage(user_email)
     home_page.make_window()
 
