@@ -11,15 +11,38 @@ class Parser():
 
 
     def get_item(self, soup):
-        demo_string = soup.get_text(separator=' ').lower().replace(' ', '')
-        item_1 = re.search(r'i\s*t\s*e\s*m\s*1[:.][\s]*b\s*u\s*s\s*i\s*n\s*e\s*s\s*s\S*\s+(?=\D)\S', demo_string)
+        demo_string = soup.get_text().lower().replace(' ', '')
+        #print(demo_string[500:8000])
+        match_num = len(re.findall(r'item\s*1\s*[:.]*\s*business\S*\s+(?=\D)\S', demo_string))
+        iter_search = re.finditer(r'item\s*1\s*[:.]*\s*business\S*\s+(?=\D)\S', demo_string)
+        select = 0
+        if match_num == 0:
+            print("No matches found!")
+        if match_num > 1:
+            select = 1
+        index = 0
+        item_1 = None
+        for match in iter_search:
+            if index == select:
+                item_1 = match
+                break
+            index = index + 1
         if item_1 is None:
-            print(f"Item 1 not found, printing demo string: {demo_string}")
+            print(f"Item 1 not found")
+            return "Item 1 not found"
         demo_string = demo_string[item_1.end()-1:]
-        item_2 = re.search(r'i\s*t\s*e\s*m\s*2[:.][\s]*p\s*r\s*o\s*p\s*e\s*r\s*t\s*i\s*e\s*s\S*\s+(?=\D)\S', demo_string)
-        if item_2 is None:
-            print(f"Item 2 not found, printing demo string: {demo_string}")
-        demo_string = demo_string[:item_2.start()]
+        item_1a = re.search(r'item\s*1a[-:.]*', demo_string)
+        if item_1a is None:
+            item_2 = re.search(r'i\s*t\s*e\s*m\s*2[:.]*[\s]*p\s*r\s*o\s*p\s*e\s*r\s*t\s*i\s*e\s*s\S*\s+(?=\D)\S', demo_string)
+            if item_2 is None:
+                print(f"End of Item 1 not found.")
+                demo_string = "Could not find end of item 1."
+            else:
+                demo_string = demo_string[:item_2.start()]
+                print(demo_string[:500])
+        else:
+            demo_string = demo_string[:item_1a.start()]
+            print(re.sub(r"\s+", ' ', demo_string))
         return re.sub(r"\s+", ' ', demo_string)
 
     def get_term_frequency(self, text, term_list):
