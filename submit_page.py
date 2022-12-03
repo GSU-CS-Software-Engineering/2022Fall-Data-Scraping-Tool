@@ -101,6 +101,9 @@ class SubmitPage:
 
                     self.progress.config(text=f"Estimated Finish Time: {remaining_time}")
                     item = parser.get_item(filings)
+                    if item == None:
+                        print("Could not locate item, continuing to next document")
+                        continue
                     total_word_count, matches = parser.get_term_frequency(item, self.word_list)
                     temp_date = dates.split('-')
                     reporting_date = f"12/31/{int(temp_date[0])-1}"

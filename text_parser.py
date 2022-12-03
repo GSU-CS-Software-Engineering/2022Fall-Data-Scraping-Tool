@@ -13,11 +13,11 @@ class Parser():
     def get_item(self, soup):
         demo_string = soup.get_text().lower().replace(' ', '')
         #print(demo_string[500:8000])
-        match_num = len(re.findall(r'item\s*1\s*[:.]*\s*business\S*\s+(?=\D)\S', demo_string))
-        iter_search = re.finditer(r'item\s*1\s*[:.]*\s*business\S*\s+(?=\D)\S', demo_string)
+        match_num = len(re.findall(r'item\s*1\s*[:.\-—]*\s*business\S*\s+(?=\D)\S', demo_string))
+        iter_search = re.finditer(r'item\s*1\s*[:.\-—]*\s*business\S*\s+(?=\D)\S', demo_string)
         select = 0
         if match_num == 0:
-            print("No matches found!")
+            print("Could not find start of item 1")
         if match_num > 1:
             select = 1
         index = 0
@@ -28,21 +28,28 @@ class Parser():
                 break
             index = index + 1
         if item_1 is None:
-            print(f"Item 1 not found")
-            return "Item 1 not found"
+            return None
         demo_string = demo_string[item_1.end()-1:]
-        item_1a = re.search(r'item\s*1a[-:.]*', demo_string)
+        item_1a = re.search(r'item\s*1a\s*[\-:.—]*', demo_string)
         if item_1a is None:
-            item_2 = re.search(r'i\s*t\s*e\s*m\s*2[:.]*[\s]*p\s*r\s*o\s*p\s*e\s*r\s*t\s*i\s*e\s*s\S*\s+(?=\D)\S', demo_string)
+            item_2 = re.search(r'i\s*t\s*e\s*m\s*2\s*[:.\-—]*[\s]*p\s*r\s*o\s*p\s*e\s*r\s*t\s*i\s*e\s*s\S*\s+(?=\D)\S', demo_string)
             if item_2 is None:
                 print(f"End of Item 1 not found.")
-                demo_string = "Could not find end of item 1."
+                return None
             else:
                 demo_string = demo_string[:item_2.start()]
-                print(demo_string[:500])
+                print(len(re.sub(r"\s+", ' ', demo_string)))
+                print(demo_string[-500:])
+                if len(demo_string) == 0:
+                    print("Item located is empty")
+                    return None
         else:
             demo_string = demo_string[:item_1a.start()]
-            print(re.sub(r"\s+", ' ', demo_string))
+            print(len(re.sub(r"\s+", ' ', demo_string)))
+            print(re.sub(r"\s+", ' ', demo_string)[-500:])
+            if len(re.sub(r"\s+", ' ', demo_string)) == 0:
+                print("Item located is empty")
+                return None
         return re.sub(r"\s+", ' ', demo_string)
 
     def get_term_frequency(self, text, term_list):
