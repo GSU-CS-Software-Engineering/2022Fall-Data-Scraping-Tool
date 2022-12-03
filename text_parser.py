@@ -6,51 +6,35 @@ from bs4 import BeautifulSoup
 
 class Parser():
     # makes usable regex from user-specified patterns
+    TOC_count = 0
+    NO_FIND = 0
+    file_count = 0
     def makelist(self, raw_list):
         return [term.replace('*', '\s*\w*\s*').strip() for term in raw_list]
 
 
     def get_item(self, soup):
-        demo_string = soup.get_text().lower().replace(' ', '')
-        #print(demo_string[500:8000])
-        match_num = len(re.findall(r'item\s*1\s*[:.\-—]*\s*business\S*\s+(?=\D)\S', demo_string))
-        iter_search = re.finditer(r'item\s*1\s*[:.\-—]*\s*business\S*\s+(?=\D)\S', demo_string)
-        select = 0
-        if match_num == 0:
-            print("Could not find start of item 1")
-        if match_num > 1:
-            select = 1
-        index = 0
-        item_1 = None
-        for match in iter_search:
-            if index == select:
-                item_1 = match
-                break
-            index = index + 1
-        if item_1 is None:
-            return None
-        demo_string = demo_string[item_1.end()-1:]
-        item_1a = re.search(r'item\s*1a\s*[\-:.—]*', demo_string)
-        if item_1a is None:
-            item_2 = re.search(r'i\s*t\s*e\s*m\s*2\s*[:.\-—]*[\s]*p\s*r\s*o\s*p\s*e\s*r\s*t\s*i\s*e\s*s\S*\s+(?=\D)\S', demo_string)
-            if item_2 is None:
-                print(f"End of Item 1 not found.")
-                return None
-            else:
-                demo_string = demo_string[:item_2.start()]
-                print(len(re.sub(r"\s+", ' ', demo_string)))
-                print(demo_string[-500:])
-                if len(demo_string) == 0:
-                    print("Item located is empty")
-                    return None
+        self.file_count = self.file_count + 1
+        print(self.file_count)
+        demo_string = soup.get_text(separator='\n').replace(' ', '').replace('\&#160', '')
+        backup = demo_string
+        demo_string = re.search(r'(?:.*\n\s*)(item\s*1\s*[:.\-—]*\s*business\.*\s*\D*\n.*)(?:\nitem\s*(1a|2)\s*[:.\-—]*\s*(properties|risk\s*factors)\.*\s*\n.*)', demo_string, flags=re.IGNORECASE | re.DOTALL)
+        print(type(demo_string))
+        if demo_string is None:
+            print("String does not match pattern: " + str(self.NO_FIND))
+            with open("troubleshoot.txt", 'a') as file:
+                file.write("NO MATCH" + str(self.NO_FIND) + "\n" + backup)
+                self.NO_FIND = self.NO_FIND + 1
+        elif len(demo_string.group(1)) < 1000:
+            print("Parser may have detected TOC instead, writing to file: " + str(self.TOC_count))
+            with open("troubleshoot.txt", 'a') as file:
+                file.write("TOC ERROR " +str(self.TOC_count) + "\n" + demo_string.group(1))
+                self.TOC_count = self.TOC_count + 1
         else:
-            demo_string = demo_string[:item_1a.start()]
-            print(len(re.sub(r"\s+", ' ', demo_string)))
-            print(re.sub(r"\s+", ' ', demo_string)[-500:])
-            if len(re.sub(r"\s+", ' ', demo_string)) == 0:
-                print("Item located is empty")
-                return None
-        return re.sub(r"\s+", ' ', demo_string)
+            demo_string = demo_string.group(1)
+            print(re.sub(r"\s+", ' ', demo_string)[:1000])
+            print(re.sub(r"\s+", ' ', demo_string)[-1000:])
+            return re.sub(r"\s+", ' ', demo_string)
 
     def get_term_frequency(self, text, term_list):
         # split into sentences for troubleshooting
