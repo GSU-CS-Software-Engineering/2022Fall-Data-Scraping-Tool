@@ -92,6 +92,7 @@ class SearchPage:
         error_given = False
         self.set_wordlist()
         ciks = self.search_bar.get('1.0', 'end').split(',')
+        cik_list = []
         try:
             cik_page = requests.get(url='https://www.sec.gov/Archives/edgar/cik-lookup-data.txt', headers=head)
             all_ciks = cik_page.content
@@ -111,14 +112,17 @@ class SearchPage:
 
 
         invalid_ciks = ""
+        invalid_cik_nums = False
 
         for cik in ciks:
             cik = cik.strip()
+            invalid_num = False
             try:
                 int(cik)
                 if cik not in str(all_ciks):
                     invalid_ciks = invalid_ciks + cik + " "
-                    analyze = False
+                    invalid_cik_nums = True
+                    invalid_num = True
             except:
                 wp = WarningPage(cik + " is not a valid integer value. Try again.")
                 error_given = True
@@ -128,11 +132,18 @@ class SearchPage:
                     wp = WarningPage(cik + " is not a 10 digit CIK number. Try again.")
                     error_given = True
                     analyze = False
+                if invalid_num:
+                    invalid_num = False
+                else:
+                    cik_list.append(cik)
+
+        if invalid_cik_nums:
+            wp = WarningPage(invalid_ciks + " are not valid CIK numbers. These will be skipped.")
         if analyze:
             print("Word list: ")
             print(self.word_list)
             if self.word_list_selected:
-                x = SubmitPage(ciks, self.date_start_variable.get(), self.date_end_variable.get(), self.word_list, self.email)
+                x = SubmitPage(cik_list, self.date_start_variable.get(), self.date_end_variable.get(), self.word_list, self.email)
                 self.output_data = x.get_output_data()
                 self.root.destroy()
                 self.root.quit()
