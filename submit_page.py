@@ -111,14 +111,17 @@ class SubmitPage:
                     self.output_data.append([ciks, "10-K (Annual report)", y, reporting_date, total_word_count, matches])
 
             except Exception as ex:
-                print(ex.with_traceback())
+                #print(ex.with_traceback())
+                pass
 
             finally:
                 print(f"cik:{ciks} finished processing")
 
-
-        self.root.destroy()
-        self.root.quit()
+        try:
+            self.root.destroy()
+            self.root.quit()
+        except:
+            pass
 
 
     def get_output_data(self):

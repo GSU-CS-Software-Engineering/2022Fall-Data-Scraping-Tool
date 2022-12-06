@@ -145,8 +145,11 @@ class SearchPage:
             if self.word_list_selected:
                 x = SubmitPage(cik_list, self.date_start_variable.get(), self.date_end_variable.get(), self.word_list, self.email)
                 self.output_data = x.get_output_data()
-                self.root.destroy()
-                self.root.quit()
+                try:
+                    self.root.destroy()
+                    self.root.quit()
+                except:
+                    pass
 
         elif error_given:
             pass
