@@ -34,7 +34,7 @@ class Parser():
             demo_string = demo_string.group(1)
             print(re.sub(r"\s+", ' ', demo_string)[:1000])
             print(re.sub(r"\s+", ' ', demo_string)[-1000:])
-            return re.sub(r"\s+", ' ', demo_string)
+            return re.sub(r"\s+", ' ', demo_string).lower()
 
     def get_term_frequency(self, text, term_list):
         # split into sentences for troubleshooting
