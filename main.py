@@ -3,6 +3,7 @@ import search_page as sp
 import email_page as mp
 from text_parser import Parser
 import os
+import sys
 '''
 These lines may need to be added the first time the program is ran on a new machine in order to get the parser to run.
 import nltk
@@ -35,4 +36,4 @@ try:
         end_page.make_window()
 
 except:
-    quit(0)
+    sys.exit(0)
